@@ -43,6 +43,23 @@ const validCases: ValidCase[] = [
     ]
   },
   {
+    name: 'Separated',
+    // prettier-ignore
+    lines: [
+      [1,0,0,0],
+      [0,0,0,0],
+      [0,0,0,0],
+      [0,0,0,1],
+    ],
+    // prettier-ignore
+    expected: [
+      [0, 1, 2, 3],
+      [1, 2, 3, 2],
+      [2, 3, 2, 1],
+      [3, 2, 1, 0],
+    ]
+  },
+  {
     name: 'Middle',
     // prettier-ignore
     lines: [
