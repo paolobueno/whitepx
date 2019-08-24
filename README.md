@@ -1,4 +1,4 @@
-# White Px
+# WHITE PX
 
 This repository contains a CLI built with Typescript for solving the following
 problem:
@@ -52,3 +52,60 @@ Output:
 2 1 0 0
 1 0 0 1
 ```
+
+## Running this solution
+
+### Dependencies
+
+- [`node`](https://nodejs.org/): Tested with 12.x
+
+Install code dependencies and run the solution on top of an example file with:
+
+```bash
+npm install
+npm run build
+node dist/index < fixtures/example.txt
+```
+
+Feel free to generate more examples through
+```bash
+node dist/generateCli 5 # value for `t`
+```
+
+## Approach description
+
+### Algorithm
+
+The problem establishes a
+[manhattan distance metric](https://en.wikipedia.org/wiki/Taxicab_geometry)
+between pixles, thus the bitmap can be seen as an undirected graph with nodes
+connected with their immediate neighbours in the cardinal directions (N, S, E,
+W) with weight `1`.
+
+The distance of a given pixel to the nearest white pixel can then be determined
+by a traversal of the graph with all the white pixels originally included as
+traversal roots.
+
+Since edge weights are positive and the same, there are no risks of arriving at
+a new undiscovered node through a shorter route in the future, or initially
+through an non-optimal route, thus the distances for each dark pixel can be
+determined at the point they are included in the traversal boundary as their
+known-distance neighbour's + 1.
+
+### Data Structures
+
+This solution utilizes a line-per-line streaming `Parser` state machine to parse
+the problem from standard input into a simple `Array2D` implementation that
+offers an interface for manipulating the parsed bitmap through 2 dimensional
+coordinates while utilizing a single, preallocated JS array as underlying
+memory.
+
+Finally, the graph traversal boundary is implemented utilizing a `Set` of the
+coordinates, leveraging it to prevent duplicates in `O(1)` over `O(n)` for a
+regular array, however the coordinates need to be serialized to a `'x-y'` string
+form since `[x, y]` object references are not considered equal and there's no
+way to override its hashing function.
+
+In the end I expect that the string serialization and parsing offsets the
+benefits of the `Set`, though the implementation remains to illustrate other
+small features, such as a getter property.
