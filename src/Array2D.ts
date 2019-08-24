@@ -1,5 +1,7 @@
+import {Coords} from './types';
+
 export class Array2D<T> {
-  private storage: T[];
+  public storage: T[];
   private pushedLine = 0;
   constructor(public width: number, public height: number) {
     if (width <= 0 || height <= 0) {
@@ -29,6 +31,9 @@ export class Array2D<T> {
   private getIdx(x: number, y: number): number {
     return y * this.width + x;
   }
+  getCoords(i: number): Coords {
+    return [i % this.width, Math.floor(i / this.width)];
+  }
   get(x: number, y: number): T {
     this.validateBounds(x, y);
     return this.storage[this.getIdx(x, y)];
@@ -44,5 +49,18 @@ export class Array2D<T> {
       lines.push(this.storage.slice(i, i + this.width));
     }
     return lines;
+  }
+  toString(): string {
+    return this.toLines()
+      .map(line => line.join(' '))
+      .join('\n');
+  }
+
+  find(predicate: (val: T) => boolean): Coords[] {
+    const res: Coords[] = [];
+    this.storage.forEach(
+      (val, i) => predicate(val) && res.push(this.getCoords(i)),
+    );
+    return res;
   }
 }
