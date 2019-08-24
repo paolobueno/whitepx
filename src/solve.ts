@@ -32,14 +32,12 @@ const visit = (boundary: CoordSet, problem: Problem) => {
   if (!target) {
     return;
   }
-  const targetDistance = problem.get(target[0], target[1]);
-  const neighbours = getNeighbours(target, problem.width, problem.height);
+  const distance = problem.get(target[0], target[1]);
+  const neighbours = getNeighbours(target, problem.width, problem.height)
+    // only unvisited nodes
+    .filter(([x, y]) => problem.get(x, y) === -1);
   neighbours.forEach(([x, y]) => {
-    // skip already visited nodes
-    if (problem.get(x, y) > -1) {
-      return;
-    }
-    problem.set(x, y, targetDistance + 1);
+    problem.set(x, y, distance + 1);
     boundary.add([x, y]);
   });
 };
