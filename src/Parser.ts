@@ -7,6 +7,7 @@ enum PARSER_STATE {
   T,
   N_M,
   LINES,
+  FINISHED,
 }
 
 export class ParseError extends Error {}
@@ -35,18 +36,18 @@ export class Parser {
     reader.on('line', this.process.bind(this));
   }
 
-  processT(str: string): void {
+  private processT(str: string): void {
     try {
       const n = parseInt(str);
       this.casesToParse = n;
-      this.cases = new Array(n);
+      this.cases = [];
       this.state = PARSER_STATE.N_M;
     } catch (e) {
       throw new ParseError(e.message);
     }
   }
 
-  processNM(str: string): void {
+  private processNM(str: string): void {
     if (this.casesToParse <= 0) {
       throw new ParseError('Input has more cases than informed');
     }
@@ -66,16 +67,25 @@ export class Parser {
     }
   }
 
-  processLines(str: string): void {
+  private processLines(str: string): void {
     const line = str.split('').map(c => parseInt(c));
     if (!this.currentCase) {
       throw new ParseError('Invalid internal state');
     }
-    this.currentCase.pushLine(line);
-    this.linesToParse;
-    if (this.linesToParse <= 0) {
-      this.emitter.emit('case', this.currentCase);
-      this.state = PARSER_STATE.N_M;
+    try {
+      this.currentCase.pushLine(line);
+      this.linesToParse--;
+      if (this.linesToParse <= 0) {
+        this.emitter.emit('case', this.currentCase);
+        if (this.casesToParse == 0) {
+          this.state = PARSER_STATE.FINISHED;
+          this.emitter.emit('end', this.cases);
+        } else {
+          this.state = PARSER_STATE.N_M;
+        }
+      }
+    } catch (e) {
+      throw new ParseError(e.message);
     }
   }
 
@@ -91,6 +101,8 @@ export class Parser {
       case PARSER_STATE.LINES:
         this.processLines(str);
         break;
+      case PARSER_STATE.FINISHED:
+        throw new ParseError('Parser already finished');
     }
   }
 }

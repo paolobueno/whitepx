@@ -37,4 +37,12 @@ export class Array2D<T> {
     this.validateBounds(x, y);
     this.storage[this.getIdx(x, y)] = value;
   }
+
+  toLines(): T[][] {
+    const lines = [];
+    for (let i = 0; i < this.storage.length; i += this.width) {
+      lines.push(this.storage.slice(i, i + this.width));
+    }
+    return lines;
+  }
 }
