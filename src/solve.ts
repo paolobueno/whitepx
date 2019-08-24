@@ -1,4 +1,5 @@
 import {Problem, Coords} from './types';
+import {CoordSet} from './CoordSet';
 
 export const getNeighbours = (
   to: Coords,
@@ -25,30 +26,6 @@ export const getNeighbours = (
   }
   return res;
 };
-
-class CoordSet {
-  private set: Set<string>;
-  private toStr(c: Coords) {
-    return c.join('-');
-  }
-  private toCoords(s: string) {
-    return s.split('-').map(x => parseInt(x)) as Coords;
-  }
-  constructor(values: Coords[]) {
-    this.set = new Set(values.map(this.toStr));
-  }
-  pop(): Coords {
-    const res = this.set.values().next().value;
-    this.set.delete(res);
-    return this.toCoords(res);
-  }
-  add(c: Coords) {
-    this.set.add(this.toStr(c));
-  }
-  public get size(): number {
-    return this.set.size;
-  }
-}
 
 const visit = (boundary: CoordSet, problem: Problem) => {
   const target = boundary.pop();
@@ -77,5 +54,4 @@ export default (p: Problem) => {
   while (boundary.size) {
     visit(boundary, p);
   }
-  //
 };

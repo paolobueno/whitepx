@@ -48,7 +48,7 @@ const validCases: ValidCase[] = [
     // prettier-ignore
     expected: [
       [
-        [0]
+        [1]
       ],
       [
         [0,1],
