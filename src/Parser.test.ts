@@ -1,6 +1,5 @@
 import {Parser, ParseError} from './Parser';
 import {Readable} from 'stream';
-import {Problem} from './types';
 
 interface Case {
   name: string;
@@ -32,7 +31,7 @@ const validCases: ValidCase[] = [
     name: 'Multiple cases',
     text: `4
 1 1
-0
+1
 2 2
 01
 10
