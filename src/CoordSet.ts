@@ -1,26 +1,23 @@
 import {Coords} from './types';
 
-const toCoords = (s: string) => {
-  return s.split('-').map(x => parseInt(x)) as Coords;
-};
-const toStr = (c: Coords) => {
-  return c.join('-');
-};
+const coordsEq = (one: Coords) => (other: Coords) =>
+  one[0] === other[0] && one[1] === other[1];
 
 export class CoordSet {
-  private set: Set<string>;
+  private storage: Array<Coords>;
   constructor(values: Coords[]) {
-    this.set = new Set(values.map(toStr));
+    this.storage = Array.from(values);
   }
-  pop(): Coords {
-    const res = this.set.values().next().value;
-    this.set.delete(res);
-    return toCoords(res);
+  pop(): Coords | undefined {
+    return this.storage.shift();
   }
   add(c: Coords) {
-    this.set.add(toStr(c));
+    if (this.storage.some(coordsEq(c))) {
+      return;
+    }
+    this.storage.push(c);
   }
   public get size(): number {
-    return this.set.size;
+    return this.storage.length;
   }
 }
